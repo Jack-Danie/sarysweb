@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style2.css">
+    <title>Crear Personaje</title>
+</head>
+<body>
+    <nav class="inicio">
+    <a href="index.html">Inicio</a>
+    
+</nav>
+    
+<form id="personajeForm">
+    <label class="ln" for="nombrePersonaje">Nombre del Personaje:</label>
+    <input class="ip" type="text" id="nombrePersonaje" placeholder="Nombre del Personaje"><br>
+
+    <label class="lap" for="descripcionPersonaje">Descripción del Personaje:</label>
+    <textarea id="descripcionPersonaje" placeholder="Descripción del Personaje (Edad, Estado Civil, Altura)" rows="4" cols="50"></textarea><br>
+
+    <label class="fp" for="fotoPersonaje">Foto del Personaje:</label>
+    <input class="if" type="file" id="fotoPersonaje" accept="image/*"><br>
+
+    <button type="button" onclick="agregarPersonaje()">Agregar Personaje</button>
+</form>
+
+<!-- Tabla para mostrar los personajes -->
+<table id="tablaPersonajes">
+    <thead>
+        <tr>
+            <th>Nombre del Personaje</th>
+            <th>Descripción del Personaje</th>
+            <th>Foto del Personaje</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Las filas se agregarán dinámicamente con JavaScript -->
+    </tbody>
+</table>
+
+<script>
+
+
+window.onload = function() {
+            cargarPersonajes();
+        };
+
+        function cargarPersonajes() {
+            var personajesGuardados = localStorage.getItem('personajes');
+            if (personajesGuardados) {
+                var tablaPersonajes = document.getElementById('tablaPersonajes').getElementsByTagName('tbody')[0];
+                tablaPersonajes.innerHTML = personajesGuardados;
+            }
+        }
+
+        function guardarPersonajes() {
+            var tablaPersonajes = document.getElementById('tablaPersonajes').getElementsByTagName('tbody')[0];
+            var personajesHTML = tablaPersonajes.innerHTML;
+            localStorage.setItem('personajes', personajesHTML);
+        }
+    function agregarPersonaje() {
+        // Obtener valores del formulario
+        var nombre = document.getElementById("nombrePersonaje").value;
+        var descripcion = document.getElementById("descripcionPersonaje").value;
+        var fotoInput = document.getElementById("fotoPersonaje");
+
+        // Validar que ambos campos estén llenos
+        if (nombre.trim() !== '' && descripcion.trim() !== '') {
+            // Crear una nueva fila
+            var fila = document.createElement('tr');
+
+            // Crear celdas y agregar contenido
+            var celdaNombre = document.createElement('td');
+            celdaNombre.textContent = nombre;
+
+            var celdaDescripcion = document.createElement('td');
+            // Agregar todos los datos a la descripción
+            celdaDescripcion.innerHTML = `
+                <strong>Edad:</strong> ${extraerValor("Edad", descripcion)}<br>
+                <strong>Estado Civil:</strong> ${extraerValor("Estado Civil", descripcion)}<br>
+                <strong>Altura:</strong> ${extraerValor("Altura", descripcion)}<br>
+                <strong>Descripción:</strong> ${extraerValor("Descripción", descripcion)}
+            `;
+
+            var celdaFoto = document.createElement('td');
+            celdaFoto.innerHTML = `<img src="${cargarFoto()}">`;
+
+            var celdaAcciones = document.createElement('td');
+            // Agregar botones de acciones
+            celdaAcciones.innerHTML = `
+                <button onclick="eliminarFila(this)">Eliminar</button>
+            `;
+
+            // Agregar las celdas a la fila
+            fila.appendChild(celdaNombre);
+            fila.appendChild(celdaDescripcion);
+            fila.appendChild(celdaFoto);
+            fila.appendChild(celdaAcciones);
+
+            // Agregar la fila a la tabla
+            document.getElementById('tablaPersonajes').getElementsByTagName('tbody')[0].appendChild(fila);
+
+            // Guardar los personajes en localStorage
+            guardarPersonajes();
+
+            // Limpiar los campos del formulario
+            document.getElementById("nombrePersonaje").value = '';
+            document.getElementById("descripcionPersonaje").value = '';
+            fotoInput.value = ''; // Limpiar el input de la foto
+        } else {
+            alert("Por favor, completa ambos campos.");
+        }
+    }
+
+    function extraerValor(propiedad, descripcion) {
+        var regex = new RegExp(propiedad + ':\\s*([^\\n\\r]*)');
+        var match = descripcion.match(regex);
+        return match ? match[1].trim() : 'No especificado';
+    }
+
+    function cargarFoto() {
+        var fotoInput = document.getElementById("fotoPersonaje");
+        var foto = '';
+
+        // Verificar si se seleccionó una foto
+        if (fotoInput.files.length > 0) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                foto = e.target.result;
+            };
+            reader.readAsDataURL(fotoInput.files[0]); // Leer la foto como base64
+        }
+
+        return foto;
+    }
+
+    function eliminarFila(botonEliminar) {
+        var fila = botonEliminar.parentNode.parentNode;
+        // Eliminar la fila de la tabla
+        fila.parentNode.removeChild(fila);
+        // Guardar los personajes en localStorage
+        guardarPersonajes();
+    }
+</script>
+</body>
+</html>
