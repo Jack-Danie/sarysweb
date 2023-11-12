@@ -8,12 +8,12 @@ body{
     margin-left: 5%;
     margin-top: 3%;
 }
-.inicio{
+nav{
     text-transform: uppercase;
     padding: 4%;
     background: linear-gradient(to top, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
 }
-.inicio a{
+nav a{
     color:#1fa799;
     position: absolute;
     right: 20px;
@@ -83,15 +83,16 @@ button{
 }
 .if{
     position: absolute;
-    left: 30%;
-    top: 30%;
-    height: 5%;
-    padding: 50px;
+    margin-left: 30%;
+    margin-top: -12.7%;
+    height: auto;
+    width: auto;
+    padding: 5%;
     background: wheat;
     border-radius: 5px;
 }
 .fp{
     position: absolute;
     left: 38%;
-    top: 25%;
+    top: 21%;
 }
